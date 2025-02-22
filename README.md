@@ -1,17 +1,48 @@
--- 간단한 프레임 + 텍스트 추가하는 로블록스 GUI 스크립트
+-- Fly 기능 구현
 local player = game.Players.LocalPlayer
-local screenGui = Instance.new("ScreenGui")
-screenGui.Parent = player:FindFirstChild("PlayerGui")
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+local mouse = player:GetMouse()
 
-local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 200, 0, 100)
-frame.Position = UDim2.new(0.5, -100, 0.5, -50)
-frame.BackgroundColor3 = Color3.fromRGB(50, 50, 200)
-frame.Parent = screenGui
+local flying = false
+local bodyVelocity
+local speed = 50
 
-local textLabel = Instance.new("TextLabel")
-textLabel.Size = UDim2.new(1, 0, 1, 0)
-textLabel.Text = "이준서 스크립트 ㅋ"
-textLabel.TextColor3 = Color3.new(1, 1, 1)
-textLabel.TextScaled = true
-textLabel.Parent = frame
+-- Fly 시작 및 종료 함수
+local function startFly()
+    if flying then return end
+    flying = true
+
+    -- 비행 중 몸체 설정
+    bodyVelocity = Instance.new("BodyVelocity")
+    bodyVelocity.MaxForce = Vector3.new(100000, 100000, 100000) -- 엄청난 힘을 가해 자유롭게 비행
+    bodyVelocity.Velocity = Vector3.new(0, 0, 0)  -- 초기 속도 설정
+    bodyVelocity.Parent = character.HumanoidRootPart
+
+    -- 비행 속도 업데이트
+    game:GetService("RunService").Heartbeat:Connect(function()
+        if flying then
+            bodyVelocity.Velocity = (mouse.Hit.p - character.HumanoidRootPart.Position).unit * speed
+        end
+    end)
+end
+
+-- Fly 종료 함수
+local function stopFly()
+    if not flying then return end
+    flying = false
+
+    -- BodyVelocity 제거하여 비행 종료
+    if bodyVelocity then
+        bodyVelocity:Destroy()
+    end
+end
+
+-- 마우스 클릭 시 플라이 시작 및 종료
+mouse.Button1Down:Connect(function()
+    if flying then
+        stopFly()
+    else
+        startFly()
+    end
+end)
