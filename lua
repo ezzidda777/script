@@ -17,3 +17,43 @@ textLabel.Text = "이준서 스크립트 ㅋ"  -- 텍스트 설정
 textLabel.TextColor3 = Color3.new(1, 1, 1)  -- 텍스트 색상 (흰색)
 textLabel.TextScaled = true  -- 텍스트 크기 자동 조정
 textLabel.Parent = frame
+
+-- 비행 상태 변수
+local isFlying = false
+local humanoid = player.Character and player.Character:WaitForChild("Humanoid")
+
+-- 비행을 시작하는 함수
+local function enableFly()
+    if not humanoid or isFlying then return end
+    isFlying = true
+
+    -- BodyVelocity로 비행 효과 추가
+    local bodyVelocity = Instance.new("BodyVelocity")
+    bodyVelocity.MaxForce = Vector3.new(10000, 10000, 10000)  -- 최대 힘 설정
+    bodyVelocity.Velocity = Vector3.new(0, 50, 0)  -- 위로 떠오르게 하는 힘
+    bodyVelocity.Parent = player.Character:WaitForChild("HumanoidRootPart")
+
+    -- 비행을 멈추는 함수
+    local function disableFly()
+        bodyVelocity:Destroy()
+        isFlying = false
+    end
+
+    -- 텍스트 라벨 클릭 시 비행 토글
+    textLabel.MouseButton1Click:Connect(function()
+        if isFlying then
+            disableFly()
+        else
+            enableFly()
+        end
+    end)
+end
+
+-- 처음 클릭 시 비행을 활성화
+textLabel.MouseButton1Click:Connect(function()
+    if not isFlying then
+        enableFly()
+    else
+        disableFly()
+    end
+end)
