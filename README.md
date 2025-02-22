@@ -11,7 +11,7 @@ frame.Parent = screenGui
 
 local textLabel = Instance.new("TextLabel")
 textLabel.Size = UDim2.new(1, 0, 1, 0)
-textLabel.Text = "GitHub에서 로드됨!"
+textLabel.Text = "이준서 스크립트 ㅋ"
 textLabel.TextColor3 = Color3.new(1, 1, 1)
 textLabel.TextScaled = true
 textLabel.Parent = frame
